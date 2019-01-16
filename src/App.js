@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import './App.scss'
 
 class ProductRow extends React.Component{
     render(){
@@ -10,6 +11,7 @@ class ProductRow extends React.Component{
             <tr>
                 <td>{product.title}</td>
                 <td>{product.price}</td>
+                <td><img src={this.props.src} /></td>
             </tr>
         )
     }
@@ -23,7 +25,8 @@ class ProductTable extends React.Component {
             rows.push(
                 <ProductRow
                     product={product}
-                    key={product.name}
+                    src={require(`./static/data/products/${product.sku}_1.jpg`)}
+                    key={product.id}
                 />
             );
         });
