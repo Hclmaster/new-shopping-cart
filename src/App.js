@@ -8,11 +8,11 @@ class ProductRow extends React.Component{
         const product = this.props.product;
 
         return(
-            <tr>
-                <td>{product.title}</td>
-                <td>{product.price}</td>
-                <td><img src={this.props.src} /></td>
-            </tr>
+            <div className="shelf-item">
+                <img src={this.props.src} />
+                <p className="shelf-item__title">{product.title}</p>
+                <p className="shelf-item__price">{product.price}</p>
+            </div>
         )
     }
 }
@@ -32,15 +32,9 @@ class ProductTable extends React.Component {
         });
 
         return(
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>{rows}</tbody>
-            </table>
+            <div className="shelf-container">
+                {rows}
+            </div>
         )
     }
 }
