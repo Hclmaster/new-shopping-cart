@@ -3,6 +3,18 @@ import logo from './logo.svg';
 import './App.css';
 import './App.scss'
 
+class ShopCartBtn extends React.Component{
+    render(){
+        return(
+            <div className="Add-to-cart-button">
+                <button>
+                    Shop Cart!
+                </button>
+            </div>
+        )
+    }
+}
+
 class ProductRow extends React.Component{
     render(){
         const product = this.props.product;
@@ -61,7 +73,10 @@ class App extends React.Component {
       if(this.state.data){
           console.log("data => ", this.state.data);
           return (
-              <ProductTable products={this.state.data}/>
+              <div className="App">
+                  <ShopCartBtn/>
+                  <ProductTable products={this.state.data}/>
+              </div>
           );
       }else{
           return <h1>Loading...</h1>
