@@ -12,6 +12,7 @@ class ProductRow extends React.Component{
                 <img src={this.props.src} />
                 <p className="shelf-item__title">{product.title}</p>
                 <p className="shelf-item__price">{product.price}</p>
+                <button>Add to cart!</button>
             </div>
         )
     }
