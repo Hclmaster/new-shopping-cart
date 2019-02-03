@@ -34,11 +34,19 @@ class ShopCart extends React.Component {
 
     render() {
         return (
-            <img class="cart-button" src={require(`./static/baseline_shopping_cart_black_18dp.png`)}
-                 onClick={event => this.handleCartClick(event)}>
+            <div>
+                <img class="cart-button" src={require(`./static/baseline_shopping_cart_black_18dp.png`)}
+                     onClick={() => this.handleCartClick()}>
+                </img>
                 {this._renderFloatingCart()}
-            </img>
+            </div>
         )
+        /*return (
+            <div>
+                <button class="cart-button" onClick={e => this.handleCartClick(e)}>CART</button>
+                {this._renderFloatingCart()}
+            </div>
+        )*/
     }
 }
 
@@ -46,8 +54,7 @@ const CartDisplay = (props) => {
     return (
         <div>
             {
-                Object.keys(props.items)
-                    .map(id => {
+                Object.keys(props.items).map(id => {
                         if (props.items[id].quantity > 0) {
                             return <CartItem info={props.items[id]} addCallback={props.addCallback}
                                              removeCallback={props.removeCallback}/>
@@ -66,9 +73,9 @@ const CartItem = (props) => {
             <div>{props.info.title}</div>
             <div>{`${props.info.price} x ${props.info.quantity} = ${props.info.price * props.info.quantity}`}</div>
             <span>
-        <button onClick={() => props.addCallback(props.info)}>Add</button>
-        <button onClick={() => props.removeCallback(props.info)}>Remove</button>
-      </span>
+            <button onClick={() => props.addCallback(props.info)}>Add</button>
+            <button onClick={() => props.removeCallback(props.info)}>Remove</button>
+          </span>
         </div>
     )
 }
@@ -86,7 +93,7 @@ class AddToCartBtn extends React.Component {
     render() {
         return (
             <div>
-                <button>Add to cart!</button>
+                <button onClick={() => this.props.addCallback(this.props.info)}>Add to cart!</button>
             </div>
         )
     }
@@ -101,7 +108,7 @@ class ProductRow extends React.Component {
                 <img src={this.props.src}/>
                 <p className="shelf-item__title">{product.title}</p>
                 <p className="shelf-item__price">${product.price}</p>
-                <AddToCartBtn/>
+                <AddToCartBtn addCallback={this.props.addCallback} info={product}/>
             </div>
         )
     }
@@ -117,6 +124,7 @@ class ProductTable extends React.Component {
                     product={product}
                     src={require(`./static/data/products/${product.sku}_1.jpg`)}
                     key={product.id}
+                    addCallback={this.props.addCallback}
                 />
             );
         });
@@ -146,7 +154,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: [],
+            products: [],
             items: {}   // object of key value pairs id: info + quantity
         }
     }
@@ -154,7 +162,7 @@ class App extends React.Component {
     componentDidMount() {
         import('./products.json').then(
             json => {
-                this.setState({data: json.products})
+                this.setState({products: json.products})
             });
 
         firebase.auth().onAuthStateChanged(user => {
@@ -163,36 +171,35 @@ class App extends React.Component {
         })
     }
 
-    /*addItem = (item) => {
-        let newItemState = null;
+    addItem = (item) => {
+        let newItemState = null
         if (this.state.items[item.id]) { // if item in cart
-            newItemState = {...this.state.items};
-            newItemState[item.id].quantity++;
+            newItemState = {...this.state.items}
+            newItemState[item.id].quantity++
         } else { // if not
-            const newItem = {...item};
-            newItem.quantity = 1;
-            newItemState = {...this.state.items};
-            newItemState[item.id] = newItem;
+            const newItem = {...item}
+            newItem.quantity = 1
+            newItemState = {...this.state.items}
+            newItemState[item.id] = newItem
         }
         this.setState({items: newItemState})
     }
 
     removeItem = (item) => {
         if (this.state.items[item.id]) { // if item in cart
-            const newItemState = {...this.state.items};
+            const newItemState = {...this.state.items}
             if (newItemState[item.id].quantity > 0) {
                 newItemState[item.id].quantity--
             }
             this.setState({items: newItemState})
         }
-    }*/
-
+    }
 
     render() {
-        console.log("data ===> ", this.state.data[0]);
+        console.log("data ===> ", this.state.products[0]);
 
         // why state.data can be null???
-        if (this.state.data) {
+        if (this.state.products) {
             return (
                 <div className="App">
                     {this.state.isSignedIn ?
@@ -211,8 +218,8 @@ class App extends React.Component {
                             />
                         )
                     }
-                    <ShopCart/>
-                    <ProductTable products={this.state.data}/>
+                    <ShopCart items={this.state.items} addCallback={this.addItem} removeCallback={this.removeItem}/>
+                    <ProductTable products={this.state.products} addCallback={this.addItem}/>
                 </div>
             );
         } else {
