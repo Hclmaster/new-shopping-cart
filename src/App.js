@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.scss';
 import firebase from "firebase";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
+import SimplePopover from "./SimplePopover";
 
 firebase.initializeApp({
     apiKey: "AIzaSyBE3JoEW7IuegFTWuSBGxXVWZByjlBcGpE",
@@ -27,8 +28,8 @@ class ShopCart extends React.Component {
 
     _renderFloatingCart = () => {
         if (this.state.isOpen) {
-            return <CartDisplay items={this.props.items} addCallback={this.props.addCallback}
-                                removeCallback={this.props.removeCallback}/>
+            return <SimplePopover items={this.props.items} addCallback={this.props.addCallback}
+                                  removeCallback={this.props.removeCallback}/>
         }
     }
 
@@ -38,46 +39,10 @@ class ShopCart extends React.Component {
                 <img class="cart-button" src={require(`./static/baseline_shopping_cart_black_18dp.png`)}
                      onClick={() => this.handleCartClick()}>
                 </img>
-                {this._renderFloatingCart()}
+                <div class="cart-button">{this._renderFloatingCart()}</div>
             </div>
         )
-        /*return (
-            <div>
-                <button class="cart-button" onClick={e => this.handleCartClick(e)}>CART</button>
-                {this._renderFloatingCart()}
-            </div>
-        )*/
     }
-}
-
-const CartDisplay = (props) => {
-    return (
-        <div>
-            {
-                Object.keys(props.items).map(id => {
-                        if (props.items[id].quantity > 0) {
-                            return <CartItem info={props.items[id]} addCallback={props.addCallback}
-                                             removeCallback={props.removeCallback}/>
-                        }
-                    })
-            }
-            <hr></hr>
-        </div>
-    )
-}
-
-const CartItem = (props) => {
-    return (
-        <div>
-            <img src={require(`./static/data/products/${props.info.sku}_2.jpg`)} alt=""/>
-            <div>{props.info.title}</div>
-            <div>{`${props.info.price} x ${props.info.quantity} = ${props.info.price * props.info.quantity}`}</div>
-            <span>
-            <button onClick={() => props.addCallback(props.info)}>Add</button>
-            <button onClick={() => props.removeCallback(props.info)}>Remove</button>
-          </span>
-        </div>
-    )
 }
 
 class AddToCartBtn extends React.Component {
@@ -155,7 +120,7 @@ class App extends React.Component {
         super(props);
         this.state = {
             products: [],
-            items: {}   // object of key value pairs id: info + quantity
+            items: {}       // id + json object
         }
     }
 
