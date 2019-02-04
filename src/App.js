@@ -4,6 +4,8 @@ import './App.scss';
 import firebase from "firebase";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
 import SimplePopover from "./SimplePopover";
+import RadioButtons from "./RadioButtons";
+import CheckboxesGroup from "./CheckboxesGroup";
 
 firebase.initializeApp({
     apiKey: "AIzaSyBE3JoEW7IuegFTWuSBGxXVWZByjlBcGpE",
@@ -105,7 +107,10 @@ class ProductTable extends React.Component {
 
 class App extends React.Component {
 
-    state = {isSignedIn: false}
+    state = {
+        isSignedIn: false,
+    }
+
     uiConfig = {
         signInFlow: "popup",
         signInOptions: [
@@ -120,7 +125,15 @@ class App extends React.Component {
         super(props);
         this.state = {
             products: [],
-            items: {}       // id + json object
+            items: {},       // id + json object
+            sizes: [
+                {value:"XS",checked:false},
+                {value:"S",checked:false},
+                {value:"M",checked:false},
+                {value:"ML",checked:false},
+                {value:"L",checked:false},
+                {value:"XL",checked:false},
+                {value:"XXL",checked:false}],
         }
     }
 
@@ -183,6 +196,7 @@ class App extends React.Component {
                             />
                         )
                     }
+                    <CheckboxesGroup sizes={this.state.sizes}/>
                     <ShopCart items={this.state.items} addCallback={this.addItem} removeCallback={this.removeItem}/>
                     <ProductTable products={this.state.products} addCallback={this.addItem}/>
                 </div>
