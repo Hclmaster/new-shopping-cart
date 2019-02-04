@@ -139,7 +139,7 @@ class App extends React.Component {
     addItem = (item) => {
         let newItemState = null
         if (this.state.items[item.id]) { // if item in cart
-            newItemState = {...this.state.items}
+            newItemState = {...this.state.items}    // copy in jsx
             newItemState[item.id].quantity++
         } else { // if not
             const newItem = {...item}
