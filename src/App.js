@@ -6,6 +6,7 @@ import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
 import SimplePopover from "./SimplePopover";
 import RadioButtons from "./RadioButtons";
 import CheckboxesGroup from "./CheckboxesGroup";
+import ChipsArray from "./ChipsArray";
 
 firebase.initializeApp({
     apiKey: "AIzaSyBE3JoEW7IuegFTWuSBGxXVWZByjlBcGpE",
@@ -69,6 +70,18 @@ class AddToCartBtn extends React.Component {
 class ProductRow extends React.Component {
     render() {
         const product = this.props.product;
+        const buttonLst = [];
+        //console.log("ProductRow ==============> ",product);
+        const arr = product.availableSizes;
+        //console.log("AvailableSizes ============> ",arr);
+
+        product.availableSizes.map(x =>
+            buttonLst.push(
+                <button>
+                    {x}
+                </button>
+            )
+        )
 
         return (
             <div className="shelf-item">
@@ -76,6 +89,7 @@ class ProductRow extends React.Component {
                 <p className="shelf-item__title">{product.title}</p>
                 <p className="shelf-item__price">${product.price}</p>
                 <AddToCartBtn addCallback={this.props.addCallback} info={product}/>
+                {buttonLst}
             </div>
         )
     }
@@ -84,6 +98,7 @@ class ProductRow extends React.Component {
 class ProductTable extends React.Component {
     render() {
         const rows = [];
+        console.log("this.props.products=======> ", this.props.products);
 
         this.props.products.forEach((product) => {
             rows.push(
@@ -126,14 +141,15 @@ class App extends React.Component {
         this.state = {
             products: [],
             items: {},       // id + json object
-            sizes: [
-                {value:"XS",checked:false},
-                {value:"S",checked:false},
-                {value:"M",checked:false},
-                {value:"ML",checked:false},
-                {value:"L",checked:false},
-                {value:"XL",checked:false},
-                {value:"XXL",checked:false}],
+            sizes: {
+                'XS': false,
+                'S': false,
+                'M': false,
+                'ML': false,
+                'L': false,
+                'XL': false,
+                'XXL' : false
+            },
         }
     }
 
@@ -173,11 +189,31 @@ class App extends React.Component {
         }
     }
 
+    applyFilter = () => {
+        const data = this.state.products.filter( product =>
+            product.availableSizes.some( size => this.state.sizes[size])
+        );
+        if(data.length) return data;
+        else return this.state.products;
+    }
+
+    // judge whether this button is clicked or not (copy object)
+    chipClickHandler = id => {
+        let stateCopy = Object.assign({}, this.state);
+        stateCopy.sizes[id] = !stateCopy.sizes[id];
+        this.setState(stateCopy);
+    }
+
     render() {
         console.log("data ===> ", this.state.products[0]);
 
+        // first get the result of the filter, can't pass the function into it.
+        const result = this.applyFilter();
+
         // why state.data can be null???
         if (this.state.products) {
+            console.log("????????????????????????");
+            console.log("data =====??????????=====> ", this.state.products[0]);
             return (
                 <div className="App">
                     {this.state.isSignedIn ?
@@ -196,9 +232,10 @@ class App extends React.Component {
                             />
                         )
                     }
-                    <CheckboxesGroup sizes={this.state.sizes}/>
+                    {/*<CheckboxesGroup sizes={this.state.sizes}/>*/}
+                    <ChipsArray sizes={this.state.sizes} chipClickHandler={this.chipClickHandler}/>
                     <ShopCart items={this.state.items} addCallback={this.addItem} removeCallback={this.removeItem}/>
-                    <ProductTable products={this.state.products} addCallback={this.addItem}/>
+                    <ProductTable products={result} addCallback={this.addItem}/>
                 </div>
             );
         } else {
